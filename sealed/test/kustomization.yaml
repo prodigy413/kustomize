@@ -1,0 +1,32 @@
+bases:
+- ../base
+
+namespace: test
+
+commonLabels:
+  app: nginx
+
+namePrefix: obi-nginx-
+
+images:
+- name: template-image
+  newName: nginx
+  newTag: 1.17.9
+
+patchesJson6902:
+  - path: ./name-patch.yaml
+    target:
+      group: apps
+      kind: Deployment
+      name: deploy
+      version: v1
+  - path: ./name-patch.yaml
+    target:
+      group: ""
+      kind: Service
+      name: svc
+      version: v1
+
+patchesStrategicMerge:
+  - configmap-custom.yaml
+  - sealed-secret-custom.yaml

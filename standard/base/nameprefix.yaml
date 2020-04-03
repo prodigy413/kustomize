@@ -1,0 +1,7 @@
+namePrefix:
+- path: spec/template/spec/containers/name
+  kind: Deployment
+- path: spec/template/spec/envFrom/configMapRef/name
+  kind: Deployment
+- path: spec/template/spec/envFrom/secretRef/name
+  kind: Deployment
