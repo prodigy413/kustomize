@@ -1,3 +1,0 @@
-namePrefix:
-- path: spec/template/spec/containers/name
-  kind: Deployment
