@@ -1,0 +1,8 @@
+configurations:
+- nameprefix.yaml
+
+resources:
+- deployment.yaml
+- service.yaml
+- secret.yaml
+- configmap.yaml

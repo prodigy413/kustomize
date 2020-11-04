@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: SET_DEPLOY_NAME
+spec:
+  template:
+    spec:
+      containers:
+      - name: -ctn
+      - name: sidecar
+        image: sidecar:1.0
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 80
+        lifecycle:
+          preStop:
+            exec:
+              command: ["/bin/bash","-c","sleep 28"]
+        resources:
+          requests:
+            memory: "3072Mi"
+            cpu: "250m"

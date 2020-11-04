@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: -configmap
+data:
+  CM_VALUE2: "nginx01"
+  CM_VALUE3: "disappear"

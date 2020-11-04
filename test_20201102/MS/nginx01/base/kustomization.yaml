@@ -1,0 +1,25 @@
+resources:
+- ../../../base
+
+commonLabels:
+  app: nginx01
+
+namePrefix: nginx01
+
+patchesJson6902:
+- target:
+    group: apps
+    kind: Deployment
+    name: SET_DEPLOY_NAME
+    version: v1
+  path: ./name-patch.yaml
+- target:
+    group: ""
+    kind: Service
+    name: SET_SERVICE_NAME
+    version: v1
+  path: ./name-patch.yaml
+
+patchesStrategicMerge:
+  - secret.yaml
+  - configmap.yaml

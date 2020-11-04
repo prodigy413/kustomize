@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sidecar-configmap
+data:
+  CM_VALUE1: "common"
+  CM_VALUE2: "disappear"

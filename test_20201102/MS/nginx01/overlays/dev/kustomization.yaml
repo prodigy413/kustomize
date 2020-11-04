@@ -1,0 +1,64 @@
+resources:
+- ../../base
+
+namespace: ns-dev
+
+commonLabels:
+  env: dev
+
+images:
+- name: SET_IMAGE
+  newName: nginx
+  newTag: 1.19.2
+
+patchesJson6902:
+- target:
+    group: ""
+    version: v1
+    kind: Service
+    name: SET_SERVICE_NAME
+  patch: |-
+    - op: replace
+      path: /spec/ports/1/name
+      value: "https"
+    - op: replace
+      path: /spec/ports/1/protocol
+      value: "TCP"
+    - op: replace
+      path: /spec/ports/1/port
+      value: 443
+    - op: replace
+      path: /spec/ports/1/targetPort
+      value: 443
+- target:
+    group: apps
+    version: v1
+    kind: Deployment
+    name: SET_DEPLOY_NAME
+  patch: |-
+    - op: replace
+      path: /spec/template/spec/containers/0/imagePullPolicy
+      value: "IfNotPresent"
+    - op: replace
+      path: /spec/template/spec/containers/0/ports/0/name
+      value: "http"
+    - op: replace
+      path: /spec/template/spec/containers/0/ports/0/protocol
+      value: "TCP"
+    - op: replace
+      path: /spec/template/spec/containers/0/ports/0/containerPort
+      value: 9080
+    - op: add
+      path: /spec/template/spec/containers/0/env/-
+      value:
+        name: "ENT_TEST"
+        value: "This is dev"
+    - op: replace
+      path: /spec/template/spec/containers/0/env/0
+      value:
+        name: "TZ"
+        value: "Mars"
+
+patchesStrategicMerge:
+  - patch-configmap.yaml
+  - patch-secret.yaml

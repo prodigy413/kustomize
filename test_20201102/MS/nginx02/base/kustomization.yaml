@@ -1,0 +1,30 @@
+resources:
+- ../../../base
+- sidecar-configmap.yaml
+- sidecar-secret.yaml
+
+commonLabels:
+  app: nginx02
+
+namePrefix: nginx02
+
+patchesJson6902:
+- target:
+    group: apps
+    kind: Deployment
+    name: SET_DEPLOY_NAME
+    version: v1
+  path: ./name-patch.yaml
+- target:
+    group: ""
+    kind: Service
+    name: SET_SERVICE_NAME
+    version: v1
+  path: ./name-patch.yaml
+
+patchesStrategicMerge:
+- configmap.yaml
+- secret.yaml
+- sidecar-deployment.yaml
+#- sidecar-configmap.yaml
+#- sidecar-secret.yaml

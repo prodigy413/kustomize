@@ -1,0 +1,133 @@
+apiVersion: v1
+data:
+  CM_VALUE1: common
+  CM_VALUE2: nginx02
+  CM_VALUE3: dev
+  CM_VALUE4: owari
+kind: ConfigMap
+metadata:
+  labels:
+    app: nginx02
+    env: dev
+  name: nginx02-configmap
+  namespace: ns-dev
+---
+apiVersion: v1
+data:
+  CM_VALUE1: common
+  CM_VALUE2: disappear
+kind: ConfigMap
+metadata:
+  labels:
+    app: nginx02
+    env: dev
+  name: nginx02sidecar-configmap
+  namespace: ns-dev
+---
+apiVersion: v1
+data:
+  PW_VALUE1: xxxxxxxx
+  PW_VALUE2: yyyyyyyy
+  PW_VALUE3: zzzzzzzz
+  PW_VALUE4: xyzxyzxyz
+kind: Secret
+metadata:
+  labels:
+    app: nginx02
+    env: dev
+  name: nginx02-secret
+  namespace: ns-dev
+---
+apiVersion: v1
+data:
+  PW_VALUE1: xxxxxxxx
+  PW_VALUE2: xxxxxxxx
+kind: Secret
+metadata:
+  labels:
+    app: nginx02
+    env: dev
+  name: nginx02sidecar-secret
+  namespace: ns-dev
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: nginx02
+    env: dev
+  name: nginx02
+  namespace: ns-dev
+spec:
+  ports:
+  - name: http
+    port: 8080
+    protocol: TCP
+    targetPort: 80
+  - name: https
+    port: 443
+    protocol: TCP
+    targetPort: 443
+  selector:
+    app: nginx02
+    env: dev
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: nginx02
+    env: dev
+  name: nginx02
+  namespace: ns-dev
+spec:
+  replicas: 2
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: nginx02
+      env: dev
+  template:
+    metadata:
+      labels:
+        app: nginx02
+        env: dev
+    spec:
+      containers:
+      - env:
+        - name: TZ
+          value: Mars
+        - name: ENT_TEST
+          value: This is dev
+        envFrom:
+        - configMapRef:
+            name: nginx02-configmap
+        - secretRef:
+            name: nginx02-secret
+        image: nginx:1.19.2
+        imagePullPolicy: IfNotPresent
+        name: nginx02-ctn
+        ports:
+        - containerPort: 9080
+          name: http
+          protocol: TCP
+        - containerPort: 443
+          name: https
+          protocol: TCP
+      - image: sidecar:1.0
+        imagePullPolicy: IfNotPresent
+        lifecycle:
+          preStop:
+            exec:
+              command:
+              - /bin/bash
+              - -c
+              - sleep 28
+        name: nginx02sidecar
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            cpu: 250m
+            memory: 3072Mi
